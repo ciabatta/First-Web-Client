@@ -1,3 +1,5 @@
+package Web::Client;
+
 #!usr/bin/perl
 use warnings;
 use strict;
@@ -7,6 +9,7 @@ sub new {
 	my $class = shift
 	my $self = {
 		_getaddress => shift;
+		_getpage => shift;
 		
 	}
 	bless $self, $class;
@@ -25,7 +28,9 @@ sub get {
 	print $socket "GET /".$getaddress[2]."/1.0\r\n";
 	print $socket "Host: "$getaddress[0]."\r\n";
 	print $socket "Cookie: test=quest\r\n\r\n";
-	print while <$sock>;
+	my @getpage = <$socket>;
+	$self => {_getpage} = $getpage if defined $getpage;
+	print while <$socket>;
 	close($socket);
 }
 
