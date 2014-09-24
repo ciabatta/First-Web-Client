@@ -10,7 +10,8 @@ sub new {
 	my $self = {
 		_getaddress => shift;
 		_getpage => shift;
-		
+		_savedata => shift;
+		_headrequest =>shift;
 	}
 	bless $self, $class;
 	return $shift;
@@ -25,12 +26,55 @@ sub get {
 		Proto => "tcp";
 	)
 	die "Could not create socket: $!\n" unless $socket;
-	print $socket "GET /".$getaddress[2]."/1.0\r\n";
-	print $socket "Host: "$getaddress[0]."\r\n";
-	print $socket "Cookie: test=quest\r\n\r\n";
+	print ($socket "GET /HTTP/1.1\r\n");
+	print ($socket "Host: "$getaddress[0]."\r\n");
 	my @getpage = <$socket>;
 	$self => {_getpage} = $getpage if defined $getpage;
 	print while <$socket>;
 	close($socket);
 }
+
+sub head {
+	my ($self, $headrequest) = @_;
+	my $self=>{_headrequest} = $headrequest if defined $headrequest;
+	my $socket = new IO::Socket::INET ( 
+			PeerAddr => "$headrequest[0]";
+			PeerPort => "$headrequest[1]";
+			Proto => "tcp";
+	)
+	die "Could not create socket: $!\n" unless $socket;
+	print ($socket "HEAD /HTTP/1.1\r\n");
+	my @head = <$socket>;
+	$self=>{_head} = @head if defined @head;
+	print while <$socket>;
+	close($socket);
+{
+
+#hey! update this method to handle conditional saving!
+sub save_page {
+	my ($self, $savedata) =@_;
+	$self=>{_savedata} = $savedata if defined $savedata;
+	my $saveaddress = $savedata[0];
+	my $filename = $savedata[1];
+	my @page = $self=>{_getpage} if defined $self=>{_getpage};
+	my $address = dir($saveaddress);
+	my $filename = $address->file($address."/.html");
+	my $filehandle = $filename->openw();
+	foreach my $lines (@page) {
+		$filehandle->print($lines."\n");
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
