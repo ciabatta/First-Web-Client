@@ -17,7 +17,7 @@ switch($input[0]) {
 		$client->head(@headdata);
 	}
 	case ("save", "Save", "SAVE") {
-		my @savedata = ($input[1], $input[0]);
+		my @savedata = ($input[1], $input[2]);
 		$client->save_page(@savedata);
 	}
 }

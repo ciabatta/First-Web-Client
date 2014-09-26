@@ -50,20 +50,32 @@ sub head {
 	close($socket);
 {
 
-#hey! update this method to handle conditional saving!
+#Hey! Update this method to handle conditional saving!
+#Updated! Thanks for the reminder.
 sub save_page {
 	my ($self, $savedata) =@_;
 	$self=>{_savedata} = $savedata if defined $savedata;
 	my $saveaddress = $savedata[0];
 	my $filename = $savedata[1];
 	my @page = $self=>{_getpage} if defined $self=>{_getpage};
-	my $address = dir($saveaddress);
-	my $filename = $address->file($address."/.html");
-	my $filehandle = $filename->openw();
-	foreach my $lines (@page) {
-		$filehandle->print($lines."\n");
+	if ($saveaddress = "-c") {
+		my $address = dir("/pages");
+		my $filename = $address->file($address."/.html");
+		my $filehandle = $filename->openw();
+		foreach my $lines (@page) {
+			$filehandle->print($lines."\n");
+		}
+	}
+	else {
+		my $address = dir($saveaddress."/pages");
+		my $filename = $address->file($address."/.html");
+		my $filehandle = $filename->openw();
+		foreach my $lines (@page) {
+			$filehandle->print($lines."\n");
+		}
 	}
 }
+
 
 
 
