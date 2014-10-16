@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Switch;
-use webclient qw(connect get);
+use webclient qw(connect get head send);
 use webserver qw(server);
 use lib "C:/Users/Calcinatus/Documents/perl_test";
 
@@ -22,12 +22,22 @@ while (42) {
 		}
 		case("get") {
 			my $getaddress = $input[1];
-			my $switch = $input[2];
-			get($getaddress, $switch);
+			my $getswitch = $input[2];
+			get($getaddress, $getswitch);
 		}
 		case("server") {
 			my $serverport = $input[1];
 			server($serverport);
+		}
+		case("head") {
+			my $headaddress = $input[1];
+			my $headswitch = [2];
+			head($headaddress, $headswitch);
+		}
+		case("send") {
+			my $sendaddress = $input[1];
+			my $sendport = $input[2];
+			send($sendaddress, $sendport);
 		}
 		else { 
 			print "Invalid command.\n";

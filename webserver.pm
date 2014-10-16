@@ -15,8 +15,9 @@ sub server {
 		Listen => 10,
 	) or die;
 	my $client;
-	while($client = $server->accept) {
+	while($client = $server->accept()) {
 		my $line = <$client>;
 		print "$line\n";
 	}
+	close $server;
 }
