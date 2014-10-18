@@ -5,10 +5,14 @@ use strict;
 use IO::Socket;
 use Switch;
 use Exporter qw(import);
+use webserver qw(server);
+use lib "C:/Users/Calcinatus/Documents/perl_test";
+use constant TRUE =>1;
+use Constant FALSE=>0;
 
-our @EXPORT_OK = qw(connect get head send);
+our @EXPORT_OK = qw(connect get head chat);
 
-sub send{
+sub chat{
 		my ($address, $port) = @_;
 		print "$address\n";
 		print "$port\n";
@@ -20,6 +24,9 @@ sub send{
 		);
 		die "Cannot connect to the server $!\n" unless $socket;
 		print "Connected to the server at $address on port $port.";
+		my $chat = "!chat";
+		$socket->send($chat);
+		#Below is for reference only. Need to get rid of it later.
 		while (42) {
 				my $message = <STDIN>;
 				switch($message) {
@@ -31,12 +38,13 @@ sub send{
 					my $rcvdata;
 					$socket->send($message);
 					$socket->flush();
-					$socket->recv($rcvdata, 10);
+					$socket->recv($rcvdata, 5000);
 					print "$rcvdata\n";
 			}
 		}
 	}
 	print "Connection killed!";
+	#Above is for reference only, need to get rid of it.
 }
 
 sub get {
@@ -49,7 +57,7 @@ sub get {
 	);
 	die "Could not GET the page $!\n" unless $socket;
 	print "Retrieving $getaddress!";
-	if ($switch == "-s") {
+	if ($switch eq "-s") {
 			my $dir = dir("/pages");
 			my $file = $dir->file("index.html");
 			my $filehandle = $file->openw();
@@ -61,11 +69,11 @@ sub get {
 					}
 				}
 		}
-	elsif ($switch == "-p") {
-	print $socket "GET /index.html HTTP/1.0\r\n"
-	print $socket "Accept: image/gif\r\n"
-	print $socket "Accept: image/jpg\r\n"
-	print $socket "Accept: image/png\r\n"
+	elsif ($switch eq "-p") {
+	print $socket "GET /index.html HTTP/1.0\r\n";
+	print $socket "Accept: image/gif\r\n";
+	print $socket "Accept: image/jpg\r\n";
+	print $socket "Accept: image/png\r\n";
 	print $socket "Accept: image/x-xbitmap\t\n";
 	$socket->flush();
 		while (my $page = <$socket>) {
@@ -88,7 +96,7 @@ sub head {
 	);
 	die "Could not get head from $headaddress...\n Heh, get head, lol!\n";
 	print "Getting head from $headaddress, lol.\n";
-	if ($switch == "-s") {
+	if ($switch eq "-s") {
 		my $dir = dir("/site");
 		my $file = dir->file("header");
 		my $filehandle = $file->openw();
@@ -100,7 +108,7 @@ sub head {
 			}
 		}
 	}
-	elsif ($switch == "-p") {
+	elsif ($switch eq "-p") {
 		print $socket "HEAD /index.html HTTP/1.0\r\n";
 		$socket->flush();
 		while (my $header = <$socket>) {
@@ -132,7 +140,7 @@ sub connect {
 					last
 				}
 				else {
-					print $socket "$request\r\n";
+					print $socket "$request /HTTP:1.1\r\n";
 					$socket->flush();
 				}
 			}
